@@ -1,25 +1,37 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
+import { authTables } from "@convex-dev/auth/server";
 
 export default defineSchema({
+  ...authTables,
   rooms: defineTable({
-    hostName: v.string(),
-    difficulty: v.union(
-      v.literal("Easy"),
-      v.literal("Medium"),
-      v.literal("Hard")
+    code: v.string(),
+    status: v.union(
+      v.literal("lobby"),
+      v.literal("countdown"),
+      v.literal("in_progress"),
+      v.literal("finished")
     ),
-    createdAt: v.number(),
-    started: v.boolean(),
-    ended: v.boolean(),
-    sentence: v.string(),
+    duration: v.number(),
+    text: v.string(),
+    hostId: v.string(),
+    lang: v.string(),
+    startTime: v.optional(v.number()),
+    endTime: v.optional(v.number()),
   }),
   players: defineTable({
     roomId: v.id("rooms"),
+    sessionId: v.string(),
     name: v.string(),
     isHost: v.boolean(),
-    progress: v.number(),
-    finishTime: v.optional(v.number()),
-    left: v.boolean(),
-  }).index("by_roomId", ["roomId", "left"]),
+    joinedAt: v.number(),
+    finishedAt: v.optional(v.number()),
+  }),
+  progress: defineTable({
+    roomId: v.id("rooms"),
+    playerId: v.id("players"),
+    currentWord: v.number(),
+    input: v.string(),
+    lastUpdate: v.number(),
+  }).index("by_room", ["roomId"]),
 });

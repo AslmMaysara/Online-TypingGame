@@ -1,5 +1,5 @@
 [package]
-name = "AslmOnlineMinigames"
+name = "OnlineGame"
 version = "1.0.0"
 
 [dependencies]
